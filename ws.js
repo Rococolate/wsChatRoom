@@ -17,7 +17,7 @@
          })
          conn.on("close", function(code, reason) {
              console.log("关闭连接==>" +conn.key)
-             var bres = { 'method': 'MSG', 'text':  conn.key + ' 离开聊天室' }
+             var bres = { 'method': 'MSG', 'text':  conn.key + ' 离开聊天室' ,'name':'SYSTEM'}
              that.broadcast(JSON.stringify(bres))
          });
          conn.on("error", function(code, reason) {
