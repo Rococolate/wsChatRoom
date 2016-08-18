@@ -1,0 +1,77 @@
+extends layout
+
+block content
+  style.
+    body{
+      display: flex;
+      flex-flow: column;
+      min-height: 100vh;
+    }
+    main{
+      flex: 1;
+      background-color: pink;
+    }
+    footer{
+      height: 200px;
+    }
+    textarea{
+      width: 90%;
+      height: 90%;
+      margin:0 auto;
+    }
+    
+  script#script(data-port='#{wsPort}')
+
+  main#show
+  footer
+    textarea#textarea 
+    button.btn.btn-default#send send
+
+  script.
+    var name 
+    var port = document.getElementById('script').dataset.port
+    var ws = new WebSocket("ws://localhost:"+port);
+    ws.onopen = function(evt) {
+        console.log("Opened.");
+        ws.send(JSON.stringify({
+          method: 'GET'
+        }))
+    };
+    ws.onclose = function(evt) {
+
+        console.log("Closed." + JSON.stringify(evt));
+    };
+    ws.onmessage = function(evt) {
+        console.log(evt)
+        console.log("Message:" + JSON.stringify(evt.data));
+        // ws.send('GET');
+        var data = JSON.parse(evt.data)
+        if(data.method && data.method == 'MSG' && data.name){
+            if(data.name == name){
+              selfPrint(data.name +':'+data.text)
+            }else{
+              print(data.name +':'+data.text)
+            }
+            
+        }
+        if(data.method && data.method == 'NAME' && data.name){
+            
+            name = data.name
+        }
+    };
+    ws.onerror = function(evt) {
+        console.log("Error." + JSON.stringify(evt));
+    };
+    function print(msg){
+      $('#show').append('<p>'+msg+'</p>')
+    }
+    function selfPrint(msg){
+      $('#show').append('<p style="text-align:right">'+msg+'</p>')
+    }
+    $('#send').click(function(){
+      console.log('111')
+      ws.send(JSON.stringify({
+        method: 'PUSH',text:$('textarea').val()
+      }))
+      $('textarea').val('')
+    })
