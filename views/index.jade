@@ -28,7 +28,7 @@ block content
   script.
     var name 
     var port = document.getElementById('script').dataset.port
-    var ws = new WebSocket("ws://ws.rococolate.com:"+port);
+    var ws = new WebSocket("ws://ws.rococolate.com");
     ws.onopen = function(evt) {
         ws.send(JSON.stringify({
           method: 'GET'
